@@ -1,0 +1,71 @@
+package models
+
+import (
+	"time"
+
+	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
+)
+
+type User struct {
+	ID                uint           `gorm:"primaryKey;auto_increment" json:"id"`
+	Name              string         `gorm:"size:255;not null" json:"name"`
+	Email             string         `gorm:"size:100;not null;unique;unique_index" json:"email"`
+	Password          string         `gorm:"size:100" json:"-"`
+	Verified          bool           `gorm:"type:boolean" json:"verified"`
+	VerificationToken *string        `gorm:"size:50;" json:"-"`
+	Image             *string        `gorm:"size:500;" json:"image"`
+	Admin             bool           `gorm:"type:boolean;not null;default:0" json:"admin"`
+	CreatedAt         time.Time      `json:"created_at"`
+	UpdatedAt         time.Time      `json:"updated_at"`
+	DeletedAt         gorm.DeletedAt `gorm:"index" json:"-"`
+}
+
+type RegisterUser struct {
+	Name     string `json:"name" validate:"required,min=4,max=50"`
+	Email    string `json:"email" validate:"required,email,min=4,max=50"`
+	Password string `json:"password" validate:"required,min=8,max=50"`
+}
+
+/**
+ * TableName
+ *
+ * @return string
+ */
+func (User) TableName() string {
+	return "users"
+}
+
+/**
+ * VerifyPassword
+ *
+ * @param string , string
+ * @return error
+ */
+func (u *User) VerifyPassword(password string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(password))
+	return err == nil
+}
+
+/**
+ * IsVerified
+ *
+ * @return bool
+ */
+func (u *User) IsVerified() bool {
+	return u.Verified
+}
+
+/**
+ * IsAdmin
+ *
+ * @return bool
+ */
+func (u *User) IsAdmin() bool {
+	return u.Admin
+}
+
+// ConvertUser /**
+func ConvertUser(claims interface{}) User {
+	return claims.(User)
+}
