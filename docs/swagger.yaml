@@ -1,4 +1,21 @@
 definitions:
+  models.LoginUser:
+    properties:
+      email:
+        maxLength: 50
+        minLength: 4
+        type: string
+      password:
+        maxLength: 50
+        minLength: 8
+        type: string
+      platform:
+        type: string
+    required:
+    - email
+    - password
+    - platform
+    type: object
   models.RegisterUser:
     properties:
       email:
@@ -135,32 +152,13 @@ paths:
     post:
       consumes:
       - application/json
-      - multipart/form-data
-      - application/x-www-form-urlencoded
       parameters:
-      - description: <code>required</code>  <code>min:4</code> <code>max:50</code>
-          <code>must be email</code>
+      - description: Login
         in: body
-        maxLength: 50
-        minLength: 4
-        name: email
+        name: reqBody
         required: true
         schema:
-          type: string
-      - description: <code>required</code>  <code>min:8</code> <code>max:50</code>
-        in: body
-        maxLength: 50
-        minLength: 8
-        name: password
-        required: true
-        schema:
-          type: string
-      - description: <code>required</code>  <code>In('panel', 'web', 'mobile')/code>
-        in: body
-        name: platform
-        required: true
-        schema:
-          type: string
+          $ref: '#/definitions/models.LoginUser'
       produces:
       - application/json
       responses:
@@ -489,12 +487,15 @@ paths:
     get:
       consumes:
       - application/json
-      - multipart/form-data
-      - application/x-www-form-urlencoded
       parameters:
       - description: Bearer Token
         in: header
-        name: token
+        name: Authorization
+        required: true
+        type: string
+      - description: User ID
+        in: path
+        name: user
         required: true
         type: string
       produces:

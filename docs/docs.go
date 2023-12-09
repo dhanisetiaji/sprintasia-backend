@@ -54,9 +54,7 @@ const docTemplate = `{
         "/v1/login": {
             "post": {
                 "consumes": [
-                    "application/json",
-                    "multipart/form-data",
-                    "application/x-www-form-urlencoded"
+                    "application/json"
                 ],
                 "produces": [
                     "application/json"
@@ -66,34 +64,12 @@ const docTemplate = `{
                 ],
                 "parameters": [
                     {
-                        "maxLength": 50,
-                        "minLength": 4,
-                        "description": "\u003ccode\u003erequired\u003c/code\u003e  \u003ccode\u003emin:4\u003c/code\u003e \u003ccode\u003emax:50\u003c/code\u003e \u003ccode\u003emust be email\u003c/code\u003e",
-                        "name": "email",
+                        "description": "Login",
+                        "name": "reqBody",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "maxLength": 50,
-                        "minLength": 8,
-                        "description": "\u003ccode\u003erequired\u003c/code\u003e  \u003ccode\u003emin:8\u003c/code\u003e \u003ccode\u003emax:50\u003c/code\u003e",
-                        "name": "password",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        }
-                    },
-                    {
-                        "description": "\u003ccode\u003erequired\u003c/code\u003e  \u003ccode\u003eIn('panel', 'web', 'mobile')/code\u003e",
-                        "name": "platform",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
+                            "$ref": "#/definitions/models.LoginUser"
                         }
                     }
                 ],
@@ -604,9 +580,7 @@ const docTemplate = `{
         "/v1/restricted/users/:user": {
             "get": {
                 "consumes": [
-                    "application/json",
-                    "multipart/form-data",
-                    "application/x-www-form-urlencoded"
+                    "application/json"
                 ],
                 "produces": [
                     "application/json"
@@ -619,8 +593,15 @@ const docTemplate = `{
                     {
                         "type": "string",
                         "description": "Bearer Token",
-                        "name": "token",
+                        "name": "Authorization",
                         "in": "header",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "User ID",
+                        "name": "user",
+                        "in": "path",
                         "required": true
                     }
                 ],
@@ -678,6 +659,29 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "models.LoginUser": {
+            "type": "object",
+            "required": [
+                "email",
+                "password",
+                "platform"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "maxLength": 50,
+                    "minLength": 4
+                },
+                "password": {
+                    "type": "string",
+                    "maxLength": 50,
+                    "minLength": 8
+                },
+                "platform": {
+                    "type": "string"
+                }
+            }
+        },
         "models.RegisterUser": {
             "type": "object",
             "required": [
