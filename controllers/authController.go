@@ -45,7 +45,7 @@ func (a AuthController) Login(c echo.Context) (err error) {
 	}
 	v := request.Validate()
 	if v != nil {
-		return c.JSON(http.StatusUnprocessableEntity, viewModels.ValidationResponse(v))
+		return c.JSON(http.StatusBadRequest, viewModels.ValidationResponse(v))
 	}
 	fmt.Println(request.Body.Email, request)
 
@@ -53,8 +53,8 @@ func (a AuthController) Login(c echo.Context) (err error) {
 	user, err = a.AuthService.GetUserByEmail(request.Body.Email)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return c.JSON(http.StatusUnprocessableEntity, viewModels.ValidationResponse(map[string]string{
-				"email": "email or password is incorrect",
+			return c.JSON(http.StatusBadRequest, viewModels.ValidationResponse(map[string]string{
+				"message": "email or password is incorrect",
 			}))
 		} else {
 			return echo.ErrInternalServerError
@@ -64,8 +64,8 @@ func (a AuthController) Login(c echo.Context) (err error) {
 	var verify bool
 	verify, err = a.AuthService.Check(request.Body.Email, request.Body.Password)
 	if !verify {
-		return c.JSON(http.StatusUnprocessableEntity, viewModels.ValidationResponse(map[string]string{
-			"email": "email or password is incorrect",
+		return c.JSON(http.StatusBadRequest, viewModels.ValidationResponse(map[string]string{
+			"message": "email or password is incorrect",
 		}))
 	}
 
@@ -114,8 +114,8 @@ func (a AuthController) Register(c echo.Context) (err error) {
 	}
 	user, _ := a.AuthService.GetUserByEmail(request.Email)
 	if user != (models.User{}) {
-		return c.JSON(http.StatusUnprocessableEntity, viewModels.ValidationResponse(map[string]string{
-			"email": "email already exists",
+		return c.JSON(http.StatusBadRequest, viewModels.ValidationResponse(map[string]string{
+			"message": "email already exists",
 		}))
 	}
 
