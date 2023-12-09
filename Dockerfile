@@ -14,8 +14,8 @@ RUN go mod download
 RUN go install github.com/swaggo/swag/cmd/swag@latest
 RUN go get -u github.com/swaggo/swag/cmd/swag
 
-# Swag init
-RUN swag init
+# Swag init to generate swagger docs on the working directory
+RUN cd /app && swag init
 
 
 # Copy the source from the current directory to the Working Directory inside the container
