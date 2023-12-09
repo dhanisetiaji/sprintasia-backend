@@ -19,5 +19,8 @@ EXPOSE 8080
 # run migrations
 RUN go run gotham -migrate
 
+# run seeds
+RUN go run gotham -seed
+
 # run the application 
 CMD ["go", "run", "gotham", "-production"]
