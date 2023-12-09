@@ -54,7 +54,7 @@ func Route(e *echo.Echo) {
 	r.Use(app.Application.Container.GetAuthMiddleware().AuthMiddleware)
 
 	// user
-	r.GET("/users/:user", app.Application.Container.GetUserController().Show, GMiddleware.Or(app.Application.Container.GetIsAdminMiddleware(), app.Application.Container.GetIsVerifiedMiddleware()))
+	r.GET("/user", app.Application.Container.GetUserController().Show, GMiddleware.Or(app.Application.Container.GetIsVerifiedMiddleware()))
 	r.GET("/users", app.Application.Container.GetUserController().Index)
 
 	//task

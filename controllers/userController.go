@@ -71,36 +71,35 @@ func (u UserController) Index(c echo.Context) (err error) {
 // @Accept  json
 // @Produce json
 // @Param Authorization header string true "Bearer Token"
-// @Param user path string true "User ID"
 // @Success 200 {object} viewModels.HTTPSuccessResponse{data=models.User}
 // @Failure 404 {object} viewModels.Message{}
 // @Failure 401 {object} viewModels.Message{}
 // @Failure 400 {object} viewModels.Message{}
 // @Failure 403 {object} viewModels.Message{}
 // @Failure 500 {object} viewModels.Message{}
-// @Router /v1/restricted/users/:user [get]
+// @Router /v1/restricted/user [get]
 func (u UserController) Show(c echo.Context) (err error) {
 	auth := models.ConvertUser(c.Get("auth"))
 
-	// Request Bind And Validation
+	// // Request Bind And Validation
 
-	request := new(requests.UserShowRequest)
+	// request := new(requests.UserShowRequest)
 
-	if err := (&echo.DefaultBinder{}).BindPathParams(c, &request.PathParams); err != nil {
-		return err
-	}
+	// if err := (&echo.DefaultBinder{}).BindPathParams(c, &request.PathParams); err != nil {
+	// 	return err
+	// }
+	// fmt.Println(request.PathParams.User)
+	// if err := (&echo.DefaultBinder{}).BindBody(c, &request.Body); err != nil {
+	// 	return err
+	// }
 
-	if err := (&echo.DefaultBinder{}).BindBody(c, &request.Body); err != nil {
-		return err
-	}
-
-	v := request.Validate()
-	if v != nil {
-		return c.JSON(http.StatusUnprocessableEntity, viewModels.ValidationResponse(v))
-	}
+	// v := request.Validate()
+	// if v != nil {
+	// 	return c.JSON(http.StatusUnprocessableEntity, viewModels.ValidationResponse(v))
+	// }
 
 	var user models.User
-	user, err = u.UserService.GetUserByID(request.PathParams.User)
+	user, err = u.UserService.GetUserByID(auth.ID)
 	if err != nil {
 		return echo.ErrInternalServerError
 	}

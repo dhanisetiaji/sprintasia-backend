@@ -442,6 +442,51 @@ paths:
       summary: update status task
       tags:
       - Task
+  /v1/restricted/user:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: Bearer Token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/viewModels.HTTPSuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/models.User'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/viewModels.Message'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/viewModels.Message'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/viewModels.Message'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/viewModels.Message'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/viewModels.Message'
+      summary: Get User
+      tags:
+      - User
   /v1/restricted/users:
     get:
       consumes:
@@ -481,56 +526,6 @@ paths:
           schema:
             $ref: '#/definitions/viewModels.Message'
       summary: List of users
-      tags:
-      - User
-  /v1/restricted/users/:user:
-    get:
-      consumes:
-      - application/json
-      parameters:
-      - description: Bearer Token
-        in: header
-        name: Authorization
-        required: true
-        type: string
-      - description: User ID
-        in: path
-        name: user
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/viewModels.HTTPSuccessResponse'
-            - properties:
-                data:
-                  $ref: '#/definitions/models.User'
-              type: object
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/viewModels.Message'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/viewModels.Message'
-        "403":
-          description: Forbidden
-          schema:
-            $ref: '#/definitions/viewModels.Message'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/viewModels.Message'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/viewModels.Message'
-      summary: Get User
       tags:
       - User
 swagger: "2.0"

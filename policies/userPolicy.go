@@ -18,7 +18,7 @@ func (UserPolicy) Index(auth models.User) bool {
 }
 
 func (UserPolicy) Show(auth models.User, user models.User) bool {
-	return auth.ID == 1 && user.Verified
+	return user.Verified
 }
 
 func (UserPolicy) Update(auth models.User, user models.User) bool {
