@@ -16,11 +16,11 @@ COPY . .
 # Expose port 8080 to the outside world
 EXPOSE 8080
 
-# run migrations
-RUN go run gotham -migrate
+# # run migrations
+# RUN go run gotham -migrate
 
-# run seeds
-RUN go run gotham -seed
+# # run seeds
+# RUN go run gotham -seed
 
-# run the application 
-CMD ["go", "run", "gotham", "-production"]
+# run the application / migration
+CMD ["go", "run", "gotham", "-migration"]
