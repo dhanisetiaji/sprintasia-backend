@@ -69,10 +69,9 @@ func (u UserController) Index(c echo.Context) (err error) {
 // @Description
 // @Tags User
 // @Accept  json
-// @Accept  multipart/form-data
-// @Accept  application/x-www-form-urlencoded
 // @Produce json
-// @Param token header string true "Bearer Token"
+// @Param Authorization header string true "Bearer Token"
+// @Param user path string true "User ID"
 // @Success 200 {object} viewModels.HTTPSuccessResponse{data=models.User}
 // @Failure 404 {object} viewModels.Message{}
 // @Failure 401 {object} viewModels.Message{}

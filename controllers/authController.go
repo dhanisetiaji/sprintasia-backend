@@ -26,12 +26,8 @@ type AuthController struct {
 // @Description
 // @Tags Auth
 // @Accept  json
-// @Accept  multipart/form-data
-// @Accept  application/x-www-form-urlencoded
 // @Produce json
-// @Param email body string true "<code>required</code>  <code>min:4</code> <code>max:50</code> <code>must be email</code>" minlength(4) maxlength(50)
-// @Param password body string true "<code>required</code>  <code>min:8</code> <code>max:50</code>" minlength(8) maxlength(50)
-// @Param platform body string true "<code>required</code>  <code>In('panel', 'web', 'mobile')/code>"
+// @Param reqBody body LoginRequest true "Login" "email,password,platform"
 // @Success 200 {object} viewModels.HTTPSuccessResponse{data=viewModels.Login}
 // @Failure 422 {object} viewModels.HTTPErrorResponse{}
 // @Failure 400 {object} viewModels.Message{}
