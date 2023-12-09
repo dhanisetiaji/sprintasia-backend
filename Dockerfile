@@ -16,11 +16,8 @@ COPY . .
 # Expose port 8080 to the outside world
 EXPOSE 8080
 
-# # run migrations
-# RUN go run gotham -migrate
+# Build the Go app
+RUN go build -o main .
 
-# # run seeds
-# RUN go run gotham -seed
-
-# run the application / migration
-CMD ["go", "run", "gotham", "-migration"]
+# Command to run the executable
+CMD ["./main"]
