@@ -27,7 +27,7 @@ type AuthController struct {
 // @Tags Auth
 // @Accept  json
 // @Produce json
-// @Param reqBody body LoginRequest true "Login" "email,password,platform"
+// @Param reqBody body models.LoginUser true "Login"
 // @Success 200 {object} viewModels.HTTPSuccessResponse{data=viewModels.Login}
 // @Failure 422 {object} viewModels.HTTPErrorResponse{}
 // @Failure 400 {object} viewModels.Message{}

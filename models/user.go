@@ -27,6 +27,12 @@ type RegisterUser struct {
 	Password string `json:"password" validate:"required,min=8,max=50"`
 }
 
+type LoginUser struct {
+	Email    string `json:"email" validate:"required,email,min=4,max=50"`
+	Password string `json:"password" validate:"required,min=8,max=50"`
+	Platfrom string `json:"platform" validate:"required"`
+}
+
 /**
  * TableName
  *
