@@ -22,7 +22,7 @@ func Route(e *echo.Echo) {
 	docs.SwaggerInfo.Description = "..."
 	docs.SwaggerInfo.Version = "1.0"
 	// docs.SwaggerInfo.Host = "localhost:8080"
-	docs.SwaggerInfo.Host = "35.240.165.4:8080"
+	docs.SwaggerInfo.Host = "34.87.116.194:8080"
 	docs.SwaggerInfo.BasePath = "/"
 
 	e.Use(middleware.Logger())
