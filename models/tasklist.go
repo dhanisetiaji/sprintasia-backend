@@ -13,6 +13,8 @@ type TaskList struct {
 	CreatedAt   time.Time `json:"created_at"`
 	UpdatedAt   time.Time `json:"updated_at"`
 	CreatedBy   uint      `gorm:"not null" json:"created_by"`
+	TaskListID  uint      `gorm:"default:0" json:"task_list_id"`
+	SubTask     []SubTask `gorm:"foreignKey:TaskListID;references:ID" json:"sub_task"`
 	User        User      `gorm:"foreignKey:CreatedBy;references:ID" json:"user"`
 }
 
@@ -26,7 +28,27 @@ type TaskListCreate struct {
 type TaskListUpdate struct {
 	Name        string    `json:"name" validate:"required,min=4,max=50"`
 	Description string    `json:"description" validate:"required"`
+	Status      string    `json:"status" validate:"required"`
 	DueDate     time.Time `json:"due_date" validate:"required"`
+}
+
+type SubTask struct {
+	ID          uint      `gorm:"primaryKey;auto_increment" json:"id"`
+	Name        string    `gorm:"size:255;not null" json:"name"`
+	Status      string    `gorm:"size:10;not null" json:"status"`
+	DueDate     time.Time `json:"due_date"`
+	Description string    `gorm:"size:255;not null" json:"description"`
+	CreatedAt   time.Time `json:"created_at"`
+	UpdatedAt   time.Time `json:"updated_at"`
+	TaskListID  uint      `gorm:"not null" json:"task_list_id"`
+}
+
+type SubTaskInterfc struct {
+	Name        string    `json:"name" validate:"required,min=4,max=50"`
+	Status      string    `json:"status" validate:"required"`
+	DueDate     time.Time `json:"due_date" validate:"required"`
+	Description string    `json:"description"`
+	TaskListID  uint      `json:"task_list_id" validate:"required"`
 }
 
 /**
@@ -36,6 +58,9 @@ type TaskListUpdate struct {
  */
 func (TaskList) TableName() string {
 	return "task_list"
+}
+func (SubTask) TableName() string {
+	return "sub_task"
 }
 
 // create ParseTimeWithLocation(request.DueDate, "Asia/Jakarta")

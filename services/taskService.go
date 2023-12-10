@@ -14,6 +14,14 @@ type ITaskService interface {
 	UpdateStatusListByID(taskList *models.TaskList, param string) (err error)
 	Update(task *models.TaskListUpdate, param string) (err error)
 	DeleteTaskListByID(paramId string) (err error)
+
+	// subtask
+	GetSubTaskByID(ID string) (models.SubTask, error)
+	CreateSubTask(subtask *models.SubTask) (err error)
+
+	// update, delete subtask
+	UpdateSubTaskByID(subtask *models.SubTaskInterfc, param string) (err error)
+	DeleteSubTaskByID(paramId string) (err error)
 }
 
 type TaskService struct {
@@ -42,4 +50,22 @@ func (service *TaskService) Update(task *models.TaskListUpdate, param string) (e
 
 func (service *TaskService) DeleteTaskListByID(paramId string) (err error) {
 	return service.TaskListRepository.Delete(paramId)
+}
+
+// SUBTASK
+
+func (service *TaskService) GetSubTaskByID(ID string) (models.SubTask, error) {
+	return service.TaskListRepository.GetSubTaskByID(ID)
+}
+
+func (service *TaskService) CreateSubTask(subtask *models.SubTask) (err error) {
+	return service.TaskListRepository.CreateSubTask(subtask)
+}
+
+func (service *TaskService) UpdateSubTaskByID(subtask *models.SubTaskInterfc, param string) (err error) {
+	return service.TaskListRepository.UpdateSubTaskByID(subtask, param)
+}
+
+func (service *TaskService) DeleteSubTaskByID(paramId string) (err error) {
+	return service.TaskListRepository.DeleteSubTaskByID(paramId)
 }

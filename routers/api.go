@@ -65,6 +65,11 @@ func Route(e *echo.Echo) {
 	r.PUT("/task/status/:id", app.Application.Container.GetTaskController().UpdateTaskList)
 	r.DELETE("/task/:id", app.Application.Container.GetTaskController().DeleteTaskList)
 
+	// subtask
+	r.POST("/subtask", app.Application.Container.GetTaskController().CreateSubTask)
+	r.PUT("/subtask/:id", app.Application.Container.GetTaskController().UpdateSubTask)
+	r.DELETE("/subtask/:id", app.Application.Container.GetTaskController().DeleteSubTask)
+
 	// Start server
 	go func() {
 		if err := e.Start(":" + config.Conf.Port); err != nil {

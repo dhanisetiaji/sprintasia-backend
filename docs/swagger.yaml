@@ -35,6 +35,45 @@ definitions:
     - name
     - password
     type: object
+  models.SubTask:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      due_date:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      status:
+        type: string
+      task_list_id:
+        type: integer
+      updated_at:
+        type: string
+    type: object
+  models.SubTaskInterfc:
+    properties:
+      description:
+        type: string
+      due_date:
+        type: string
+      name:
+        maxLength: 50
+        minLength: 4
+        type: string
+      status:
+        type: string
+      task_list_id:
+        type: integer
+    required:
+    - due_date
+    - name
+    - status
+    - task_list_id
+    type: object
   models.TaskList:
     properties:
       created_at:
@@ -51,6 +90,12 @@ definitions:
         type: string
       status:
         type: string
+      sub_task:
+        items:
+          $ref: '#/definitions/models.SubTask'
+        type: array
+      task_list_id:
+        type: integer
       updated_at:
         type: string
       user:
@@ -217,6 +262,110 @@ paths:
             $ref: '#/definitions/viewModels.Message'
       tags:
       - Auth
+  /v1/restricted/subtask:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Bearer Token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: reqBody
+        in: body
+        name: reqBody
+        required: true
+        schema:
+          $ref: '#/definitions/models.SubTaskInterfc'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/viewModels.Message'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/viewModels.Message'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/viewModels.Message'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/viewModels.Message'
+      summary: create Subtask
+      tags:
+      - SubTask
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: Bearer Token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: reqBody
+        in: body
+        name: reqBody
+        required: true
+        schema:
+          $ref: '#/definitions/models.SubTaskInterfc'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/viewModels.Message'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/viewModels.Message'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/viewModels.Message'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/viewModels.Message'
+      summary: update subtask
+      tags:
+      - SubTask
+  /v1/restricted/subtask/{id}:
+    delete:
+      consumes:
+      - application/json
+      parameters:
+      - description: Bearer Token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/viewModels.Message'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/viewModels.Message'
+      summary: delete task
+      tags:
+      - Task
   /v1/restricted/task:
     get:
       consumes:

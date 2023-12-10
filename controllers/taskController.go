@@ -3,6 +3,7 @@ package controllers
 import (
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 
@@ -153,11 +154,11 @@ func (t TaskController) Update(c echo.Context) (err error) {
 		return err
 	}
 
-	// if request.Status != "ongoing" && request.Status != "done" {
-	// 	return c.JSON(http.StatusBadRequest, viewModels.ValidationResponse(map[string]string{
-	// 		"status": "status must be ongoing or done",
-	// 	}))
-	// }
+	if request.Status != "ongoing" && request.Status != "done" {
+		return c.JSON(http.StatusBadRequest, viewModels.ValidationResponse(map[string]string{
+			"status": "status must be ongoing or done",
+		}))
+	}
 
 	// check data by jwt
 	fmt.Println(auth, "auth")
@@ -300,5 +301,175 @@ func (t TaskController) DeleteTaskList(c echo.Context) (err error) {
 	// Response
 	return c.JSON(http.StatusOK, viewModels.SuccessResponse(map[string]string{
 		"message": "task deleted",
+	}))
+}
+
+// Index godoc
+// @Summary create Subtask
+// @Description
+// @Tags SubTask
+// @Accept  json
+// @Produce json
+// @Param Authorization header string true "Bearer Token"
+// @Param reqBody body models.SubTaskInterfc true "reqBody"
+// @Success 200 {object} viewModels.Message{}
+// @Failure 400 {object} viewModels.Message{}
+// @Failure 401 {object} viewModels.Message{}
+// @Failure 500 {object} viewModels.Message{}
+// @Router /v1/restricted/subtask [post]
+func (t TaskController) CreateSubTask(c echo.Context) (err error) {
+	auth := models.ConvertUser(c.Get("auth"))
+
+	// Request Bind And Validation
+	request := models.SubTask{}
+	if err := (&echo.DefaultBinder{}).BindBody(c, &request); err != nil {
+		return err
+	}
+
+	if request.Status != "ongoing" && request.Status != "done" {
+		return c.JSON(http.StatusBadRequest, viewModels.ValidationResponse(map[string]string{
+			"status": "status must be ongoing or done",
+		}))
+	}
+
+	// Parse the time with the correct time zone (UTC)
+	request.DueDate, err = models.ParseTimeWithLocation(request.DueDate, "Asia/Jakarta")
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, viewModels.ValidationResponse(map[string]string{
+			"due_date": "due date must be filled",
+		}))
+	}
+
+	// check data by jwt
+	taskList, err := t.TaskService.GetTaskListByUserID(auth.ID, strconv.Itoa(int(request.TaskListID)))
+	if err != nil {
+		return echo.ErrInternalServerError
+	}
+	if len(taskList) == 0 {
+		return c.JSON(http.StatusBadRequest, viewModels.ValidationResponse(map[string]string{
+			"message": "task id not found",
+		}))
+	}
+
+	err = t.TaskService.CreateSubTask(&request)
+	if err != nil {
+		fmt.Println(err)
+		return echo.ErrInternalServerError
+	}
+
+	// Response
+	return c.JSON(http.StatusOK, viewModels.SuccessResponse(map[string]string{
+		"message": "sub task created",
+	}))
+}
+
+// Update godoc
+// @Summary update subtask
+// @Description
+// @Tags SubTask
+// @Accept  json
+// @Produce json
+// @Param Authorization header string true "Bearer Token"
+// @Param reqBody body models.SubTaskInterfc true "reqBody"
+// @Success 200 {object} viewModels.Message{}
+// @Failure 400 {object} viewModels.Message{}
+// @Failure 401 {object} viewModels.Message{}
+// @Failure 500 {object} viewModels.Message{}
+// @Router /v1/restricted/subtask [put]
+func (t TaskController) UpdateSubTask(c echo.Context) (err error) {
+	auth := models.ConvertUser(c.Get("auth"))
+
+	// Request Bind And Validation
+	request := models.SubTaskInterfc{}
+	if err := (&echo.DefaultBinder{}).BindBody(c, &request); err != nil {
+		return err
+	}
+
+	if request.Status != "ongoing" && request.Status != "done" {
+		return c.JSON(http.StatusBadRequest, viewModels.ValidationResponse(map[string]string{
+			"status": "status must be ongoing or done",
+		}))
+	}
+
+	// Parse the time with the correct time zone (UTC)
+	request.DueDate, err = models.ParseTimeWithLocation(request.DueDate, "Asia/Jakarta")
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, viewModels.ValidationResponse(map[string]string{
+			"due_date": "due date must be filled",
+		}))
+	}
+
+	// check data by jwt
+	taskList, err := t.TaskService.GetTaskListByUserID(auth.ID, strconv.Itoa(int(request.TaskListID)))
+	if err != nil {
+		return echo.ErrInternalServerError
+	}
+	if len(taskList) == 0 {
+		return c.JSON(http.StatusBadRequest, viewModels.ValidationResponse(map[string]string{
+			"message": "task id not found",
+		}))
+	}
+
+	paramId := c.Param("id")
+	if paramId == "" {
+		return c.JSON(http.StatusBadRequest, viewModels.ValidationResponse(map[string]string{
+			"id": "id must be filled",
+		}))
+	}
+
+	err = t.TaskService.UpdateSubTaskByID(&request, paramId)
+	if err != nil {
+		fmt.Println(err)
+		return echo.ErrInternalServerError
+	}
+
+	// Response
+	return c.JSON(http.StatusOK, viewModels.SuccessResponse(map[string]string{
+		"message": "sub task updated",
+	}))
+}
+
+// Delete godoc
+// @Summary delete task
+// @Description
+// @Tags Task
+// @Accept  json
+// @Produce json
+// @Param Authorization header string true "Bearer Token"
+// @Param id path int true "id"
+// @Success 200 {object} viewModels.Message{}
+// @Failure 500 {object} viewModels.Message{}
+// @Router /v1/restricted/subtask/{id} [delete]
+func (t TaskController) DeleteSubTask(c echo.Context) (err error) {
+	// auth := models.ConvertUser(c.Get("auth"))
+
+	// check data by jwt
+	subtask, err := t.TaskService.GetSubTaskByID(c.Param("id"))
+	if err != nil {
+		if err.Error() == "record not found" {
+			return c.JSON(http.StatusBadRequest, viewModels.ValidationResponse(map[string]string{
+				"message": "data not found",
+			}))
+		}
+		return echo.ErrInternalServerError
+	}
+	fmt.Println(subtask, "f")
+
+	paramId := c.Param("id")
+	if paramId == "" {
+		return c.JSON(http.StatusBadRequest, viewModels.ValidationResponse(map[string]string{
+			"id": "id must be filled",
+		}))
+	}
+
+	err = t.TaskService.DeleteSubTaskByID(paramId)
+	if err != nil {
+		fmt.Println(err)
+		return echo.ErrInternalServerError
+	}
+
+	// Response
+	return c.JSON(http.StatusOK, viewModels.SuccessResponse(map[string]string{
+		"message": "sub task deleted",
 	}))
 }
